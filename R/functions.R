@@ -25,7 +25,7 @@ ch_queries <- function(variables, months, models, scenarios, timeframes){
                    addendum=case_when(variable=="prec" ~ "",
                                       TRUE ~ "_V1.2"),
                    file=paste0(timeframe, "/", variable, "/CHELSA_", variable2, "_mon_", model,
-                               "_", scenario, "_r12i1p1_g025.nc_", month, "_", timeframe, addendum, ".tif"),
+                               "_", scenario, "_r*i1p1_g025.nc_", month, "_", timeframe, addendum, ".tif"),
                    url=paste0("https://www.wsl.ch/lud/chelsa/data/cmip5/", file))
 }
 
@@ -60,7 +60,20 @@ ch_dl <- function(md, dest, skip_existing=TRUE, method="curl", crop=NULL){
                   }
             }
 
-            r <- try(download.file(md$url[i], md$path[i], method=method))
+            # run numbers vary by model. try all options.
+            runs <- c("1", "2", "12")
+            for(run in runs){
+                  url <- sub("\\*", run, md$url[i])
+                  path <- sub("\\*", run, md$path[i])
+                  r <- try(download.file(url, path, method=method, quiet=T))
+                  size <- file.size(path)
+                  if(!is.na(size) & log(size)>10){
+                        md$url[i] <- url
+                        md$path[i] <- path
+                        break()
+                  }
+                  file.remove(path)
+            }
 
             if(class(r)=="try-error"){
                   md$status[i] <- as.character(r)
@@ -72,7 +85,7 @@ ch_dl <- function(md, dest, skip_existing=TRUE, method="curl", crop=NULL){
                   require(raster)
                   r <- raster(md$path[i]) %>%
                         crop(crop) %>%
-                        writeRaster(md$path[i])
+                        writeRaster(md$path[i], overwrite=T)
             }
       }
       return(md)
