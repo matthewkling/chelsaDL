@@ -51,17 +51,19 @@ ch_dl <- function(md, dest, skip_existing=TRUE, method="curl", crop=NULL){
 
             md$path[i] <- paste0(dest, "/", basename(md$file[i]))
 
+            runs <- c("1", "2", "12")
+
             if(skip_existing){
                   # previously-failed downloads have small file size
-                  size <- file.size(md$path[i])
-                  if(!is.na(size) & log(size)>10){
+                  paths <- sapply(runs, function(x) sub("\\*", x, md$path[i]))
+                  size <- file.size(paths)
+                  if(any(!is.na(size) & log(size)>10)){
                         md$status[i] <- "already done"
                         next()
                   }
             }
 
             # run numbers vary by model. try all options.
-            runs <- c("1", "2", "12")
             for(run in runs){
                   url <- sub("\\*", run, md$url[i])
                   path <- sub("\\*", run, md$path[i])
@@ -79,13 +81,14 @@ ch_dl <- function(md, dest, skip_existing=TRUE, method="curl", crop=NULL){
                   md$status[i] <- as.character(r)
                   next()
             }
-            if(file.exists(md$path)) md$status[i] <- "download completed"
+            if(file.exists(md$path[i])) md$status[i] <- "download completed"
 
-            if(!is.null(crop)){
+            if(!is.null(crop) & file.exists(md$path[i])){
                   require(raster)
                   r <- raster(md$path[i]) %>%
                         crop(crop) %>%
                         writeRaster(md$path[i], overwrite=T)
+                  md$status[i] <- "raster cropped"
             }
       }
       return(md)
