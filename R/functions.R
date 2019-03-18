@@ -45,7 +45,10 @@ ch_queries <- function(variables, months, models, scenarios, timeframes){
 #' @param method Download method, passed to downloa.file (character).
 #' @param crop Spatial bounding box to crop each downloaded raster to (an extent
 #'   object, or any spatial object with an extent).
-ch_dl <- function(md, dest, skip_existing=TRUE, method="curl", crop=NULL){
+ch_dl <- function(md, dest=NULL, skip_existing=TRUE, method="curl", crop=NULL){
+
+      if(is.null(dest)) dest <- getwd()
+
       for(i in 1:nrow(md)){
             message(paste("File", i, "of", nrow(md), "..."))
 

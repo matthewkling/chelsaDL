@@ -4,7 +4,8 @@
 \alias{ch_dl}
 \title{Download CHELSA data}
 \usage{
-ch_dl(md, dest, skip_existing = TRUE, method = "curl", crop = NULL)
+ch_dl(md, dest = NULL, skip_existing = TRUE, method = "curl",
+  crop = NULL)
 }
 \arguments{
 \item{md}{Variables to download (a data frame created by ch_queries).}
