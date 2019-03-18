@@ -70,9 +70,9 @@ ch_dl <- function(md, dest, skip_existing=TRUE, method="curl", crop=NULL){
 
             if(!is.null(crop)){
                   require(raster)
-                  r <- raster(mdi$path[i]) %>%
+                  r <- raster(md$path[i]) %>%
                         crop(crop) %>%
-                        writeRaster(mdi$path[i])
+                        writeRaster(md$path[i])
             }
       }
       return(md)
