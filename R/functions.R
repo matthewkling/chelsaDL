@@ -51,7 +51,7 @@ ch_dl <- function(md, dest=NULL, skip_existing=TRUE, method="curl", crop=NULL){
 
       for(i in 1:nrow(md)){
             message(paste("File", i, "of", nrow(md), "..."))
-
+            md$status[i] <- "incomplete"
             md$path[i] <- paste0(dest, "/", basename(md$file[i]))
 
             runs <- c("1", "2", "12")
@@ -61,6 +61,7 @@ ch_dl <- function(md, dest=NULL, skip_existing=TRUE, method="curl", crop=NULL){
                   paths <- sapply(runs, function(x) sub("\\*", x, md$path[i]))
                   size <- file.size(paths)
                   if(any(!is.na(size) & log(size)>10)){
+                        md$path[i] <- paths[!is.na(size) & log(size)>10]
                         md$status[i] <- "already done"
                         next()
                   }
