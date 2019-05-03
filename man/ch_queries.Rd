@@ -4,18 +4,21 @@
 \alias{ch_queries}
 \title{Build a list of files to download}
 \usage{
-ch_queries(variables, months, models, scenarios, timeframes)
+ch_queries(variables, layers, models = NA, scenarios = NA, timeframes)
 }
 \arguments{
-\item{variables}{character vector.}
+\item{variables}{character vector, options include "tmin", "tmax", "temp",
+"prec", and "bio".}
 
-\item{months}{character vector.}
+\item{layers}{integer vector, options include 1:12 for base variables
+(representing months) and 1:19 for bio (representing biovariable number).}
 
-\item{models}{character vector.}
+\item{models}{character vector, specify only for future data.}
 
-\item{scenarios}{character vector.}
+\item{scenarios}{character vector, specify only for future data.}
 
-\item{timeframes}{character vector.}
+\item{timeframes}{character vector, options include "1979-2013", "2014-2060",
+and "2061-2080".}
 }
 \value{
 a data frame of metadata for all factorial combinations of the
@@ -23,5 +26,10 @@ a data frame of metadata for all factorial combinations of the
 }
 \description{
 This function constructs a set of download URLs for the requested
-combinations of metadata variables
+combinations of metadata variables. It currently supports download of
+historic climatologies and future CMIP5 model predictions for both basic
+monthly variables and bioclimatic variables. CHELSA provides historic data in
+integer*10 format and floating point format, but only the former is available
+using this function, for consistency with CMIP5 futures which are available
+only in integer*10 format.
 }
